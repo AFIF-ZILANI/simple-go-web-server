@@ -1,0 +1,9 @@
+package simplewebserver
+
+import "fmt"
+
+func main() {
+
+	fmt.Println("Hello, World!")
+
+}

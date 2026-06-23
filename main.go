@@ -1,4 +1,4 @@
-package simplewebserver
+package main
 
 import "fmt"
 

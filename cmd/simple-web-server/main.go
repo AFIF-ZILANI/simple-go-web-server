@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -21,7 +20,7 @@ func main() {
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Welcome to students api"))
-		fmt.Fprintf(w, "Hello, World! This is a simple web server.")
+		slog.Info("Received request", "method", r.Method, "url", r.URL.String())
 	})
 
 	server := http.Server{
@@ -29,7 +28,7 @@ func main() {
 		Handler: router,
 	}
 
-	fmt.Printf("Server is running on %s\n", cfg.Address)
+	slog.Info("Server is running on", slog.String("address", cfg.Address))
 
 	done := make(chan os.Signal, 1)
 
@@ -39,7 +38,7 @@ func main() {
 		err := server.ListenAndServe()
 
 		if err != nil {
-			fmt.Printf("Failed to start server: %s\n", err.Error())
+			slog.Error("Failed to start server", "error", err)
 		}
 	}()
 

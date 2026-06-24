@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/AFIF-ZILANI/simple-web-server/pkg/config"
+	"github.com/AFIF-ZILANI/simple-web-server/pkg/http/handlers/student"
 )
 
 func main() {
@@ -18,10 +19,7 @@ func main() {
 
 	router := http.NewServeMux()
 
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Welcome to students api"))
-		slog.Info("Received request", "method", r.Method, "url", r.URL.String())
-	})
+	router.HandleFunc("POST /api/students", student.New())
 
 	server := http.Server{
 		Addr:    cfg.Address,

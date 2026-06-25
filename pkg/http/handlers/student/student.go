@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log/slog"
 	"net/http"
 
 	"github.com/AFIF-ZILANI/simple-web-server/pkg/types"
+	"github.com/AFIF-ZILANI/simple-web-server/pkg/utils/response"
 )
 
 func New() http.HandlerFunc {
@@ -17,10 +19,12 @@ func New() http.HandlerFunc {
 		err := json.NewDecoder(r.Body).Decode(&student)
 
 		if errors.Is(err, io.EOF) {
-			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			response.WriteJSON(w, http.StatusBadRequest, err.Error())
 			return
 		}
 
-		w.Write([]byte("Create new Student"))
+		slog.Info("Creating a student")
+
+		response.WriteJSON(w, http.StatusCreated, map[string]string{"success": "OK"})
 	}
 }

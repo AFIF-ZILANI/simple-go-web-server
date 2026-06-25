@@ -19,7 +19,7 @@ func New() http.HandlerFunc {
 		err := json.NewDecoder(r.Body).Decode(&student)
 
 		if errors.Is(err, io.EOF) {
-			response.WriteJSON(w, http.StatusBadRequest, err.Error())
+			response.WriteJSON(w, http.StatusBadRequest, response.GeneralError(err))
 			return
 		}
 

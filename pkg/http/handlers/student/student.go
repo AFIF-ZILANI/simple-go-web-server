@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"log/slog"
 	"net/http"
 
 	"github.com/AFIF-ZILANI/simple-web-server/pkg/types"
 	"github.com/AFIF-ZILANI/simple-web-server/pkg/utils/response"
+	"github.com/go-playground/validator/v10"
 )
 
 func New() http.HandlerFunc {
@@ -23,7 +23,17 @@ func New() http.HandlerFunc {
 			return
 		}
 
-		slog.Info("Creating a student")
+		if err != nil {
+			response.WriteJSON(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
+
+		// validate request body
+
+		if err := validator.New().Struct(student); err != nil {
+			response.WriteJSON(w, http.StatusBadRequest, response.ValidationError(err.(validator.ValidationErrors)))
+			return
+		}
 
 		response.WriteJSON(w, http.StatusCreated, map[string]string{"success": "OK"})
 	}

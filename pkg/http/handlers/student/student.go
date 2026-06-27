@@ -7,6 +7,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/AFIF-ZILANI/simple-web-server/pkg/storage"
 	"github.com/AFIF-ZILANI/simple-web-server/pkg/types"
@@ -47,5 +48,28 @@ func New(storage storage.Storage) http.HandlerFunc {
 		slog.Info("user created successfully", slog.String("userId", fmt.Sprint(lastId)))
 
 		response.WriteJSON(w, http.StatusCreated, map[string]int64{"id": lastId})
+	}
+}
+
+func GetById(storage storage.Storage) http.HandlerFunc {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+
+		if err != nil {
+			response.WriteJSON(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
+
+		student, err := storage.GetStudentById(id)
+
+		if err != nil {
+			slog.Error("error getting user", slog.String("id", fmt.Sprint(id)))
+			response.WriteJSON(w, http.StatusInternalServerError, response.GeneralError(err))
+			return
+		}
+
+		response.WriteJSON(w, http.StatusOK, student)
 	}
 }
